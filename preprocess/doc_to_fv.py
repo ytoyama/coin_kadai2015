@@ -26,3 +26,4 @@ for word, index in sorted(wordIndex.items(), key=operator.itemgetter(1)):
   print("{}:{} {}".format(index, wordCount[word], word))
 
 wordIndex.close()
+wordCount.close()

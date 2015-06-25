@@ -9,7 +9,7 @@ import shelve
 import operator
 
 
-DEBUG = True
+DEBUG = False
 
 def debug(*x):
   if DEBUG:

@@ -15,7 +15,7 @@ if len(sys.argv) != 3:
 LABEL = sys.argv[1]
 TARGET_DIR = sys.argv[2]
 
-assert LABEL.isdigit()
+#assert LABEL.isdigit()
 assert os.path.isdir(TARGET_DIR)
 
 # initialize db

@@ -24,7 +24,6 @@ wordIndex = shelve.open('word_index.db')
 
 for item in map(lambda path: os.path.join(TARGET_DIR, path),
     os.listdir(TARGET_DIR)):
-  print(item)
   if os.path.isfile(item):
     with open(item, 'r') as f:
       for sentence in map(nltk.tokenize.word_tokenize,
@@ -39,8 +38,10 @@ for item in map(lambda path: os.path.join(TARGET_DIR, path),
             wordIndex[word] = len(wordIndex) + 1
             wordCount[word] = 1
 
-for word, index in sorted(wordIndex.items(), key=operator.itemgetter(1)):
-  print("{} {}:{} {}".format(LABEL, index, wordCount[word], word))
+print(LABEL, " ".join(
+    ["{}:{}".format(index, wordCount[word])
+    for word, index in sorted(wordIndex.items(),
+    key=operator.itemgetter(1))]))
 
 # finalize db
 wordCount.close()

@@ -17,7 +17,6 @@ wordIndex = shelve.open('word_index.db')
 
 for item in map(lambda path: os.path.join(sys.argv[1], path),
     os.listdir(sys.argv[1])):
-  print(item)
   if os.path.isfile(item):
     with open(item, 'r') as f:
       for sentence in map(nltk.tokenize.word_tokenize,

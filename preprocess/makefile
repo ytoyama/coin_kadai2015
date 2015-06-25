@@ -4,6 +4,6 @@ all:
 	@echo nothing to do
 
 clean:
-	$(RM) *.db
+	$(RM) *.db *.pyc
 
 .PHONY: all clean

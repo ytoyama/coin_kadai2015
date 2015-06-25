@@ -18,13 +18,14 @@ def debug(*x):
 
 
 if __name__ == "__main__":
-  if len(sys.argv) != 2:
-    print("usage: {} <directory>".format(sys.argv[0]))
+  if len(sys.argv) != 3:
+    print("usage: {} <label> <directory>".format(sys.argv[0]))
     exit(1)
   
-  TARGET_DIR = sys.argv[1]
+  LABEL = sys.argv[1]
+  TARGET_DIR = sys.argv[2]
   assert os.path.isdir(TARGET_DIR)
 
-  map(lambda path: print(doc_to_fv.doc_to_fv(path)),
+  map(lambda path: print(LABEL, doc_to_fv.doc_to_fv(path)),
       [item for item in map(lambda path: os.path.join(TARGET_DIR, path),
       os.listdir(TARGET_DIR)) if os.path.isfile(item)])

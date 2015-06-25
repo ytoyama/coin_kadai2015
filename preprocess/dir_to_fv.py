@@ -32,8 +32,10 @@ for item in map(lambda path: os.path.join(sys.argv[1], path),
             wordIndex[word] = len(wordIndex) + 1
             wordCount[word] = 1
 
-for word, index in sorted(wordIndex.items(), key=operator.itemgetter(1)):
-  print("{}:{} {}".format(index, wordCount[word], word))
+print(" ".join(
+    ["{}:{}".format(index, wordCount[word])
+    for word, index in sorted(wordIndex.items(),
+    key=operator.itemgetter(1))]))
 
 # finalize db
 wordCount.close()

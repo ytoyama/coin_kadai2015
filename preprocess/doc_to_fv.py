@@ -9,8 +9,8 @@ import os
 
 
 def doc_to_fv(doc_file):
-  COUNT_DB_FILE = 'word_count.db'
-  INDEX_DB_FILE = 'word_index.db'
+  COUNT_DB_FILE = 'word_count_{}.db'.format(os.getpid())
+  INDEX_DB_FILE = 'word_index_{}.db'.format(os.getpid())
 
   wordCount = shelve.open(COUNT_DB_FILE)
   wordIndex = shelve.open(INDEX_DB_FILE)

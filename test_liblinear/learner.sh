@@ -1,6 +1,6 @@
 #!/bin/sh
 
-LIBLINEAR_DIR='../liblinear*'
+LIBLINEAR_DIR='./liblinear*'
 
 TRAIN_FILE='train_cv0.txt'
 TEST_FILE='test_cv0.txt'

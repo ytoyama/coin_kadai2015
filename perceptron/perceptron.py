@@ -19,14 +19,11 @@ def read_instance(line):
       [(int(fv_elem.split(':')[0]), int(fv_elem.split(':')[1]))
       for fv_elem in line.split()[1:]])
 
-def read_data(filename_list):
-  instance_list = []
-  for filename in filename_list:
-    with open(filename) as f:
-      instance_list += [read_instance(line)
-          for line in f.read().split('\n') if line]
-  return (instance_list,
-      max(*[len(instance[1]) for instance in instance_list]))
+def read_data(filename):
+  with open(filename) as f:
+    instance_list = [read_instance(line)
+        for line in f.read().split('\n') if line]
+  return (instance_list, max(len(instance[1]) for instance in instance_list))
 
 def add_fv(weight, fv):
   assert len(weight) >= len(fv)
@@ -58,7 +55,8 @@ def update_weight(weight, instance):
 if __name__ == "__main__":
   assert len(sys.argv) == 3, \
       "usage: {} <train data> <test data>".format(sys.argv[0])
-  train_data, max_index = read_data(sys.argv[1:])
+  train_data, max_index = read_data(sys.argv[1])
+  test_data, test_max_index = read_data(sys.argv[2])
   #debug(train_data, max_index)
   weight = [0] * (max_index + 1)
 

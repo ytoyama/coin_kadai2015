@@ -6,7 +6,7 @@ import math
 
 # debugger
 
-DEBUG = True
+DEBUG = False
 def debug(*x):
   if DEBUG:
     print(*x, file=sys.stderr)

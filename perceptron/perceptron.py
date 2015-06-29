@@ -21,9 +21,9 @@ def read_instance(line):
 
 def read_data(filename):
   with open(filename) as f:
-    instance_list = [read_instance(line)
+    instances = [read_instance(line)
         for line in f.read().split('\n') if line]
-  return (instance_list, max(len(instance[1]) for instance in instance_list))
+  return (instances, max(len(instance[1]) for instance in instances))
 
 def add_fv(weight, fv):
   assert len(weight) >= len(fv)
@@ -36,18 +36,25 @@ def sub_fv(weight, fv):
     weight[fv_elem[0]] -= fv_elem[1]
 
 def mult_fv(wight, fv):
-  if len(fv) > len(weight):
-    return False
   assert len(weight) >= len(fv)
   return sum(x * y[1] for x, y in zip(weight, fv))
 
 def update_weight(weight, instance):
-  if mult_fv(weight, instance[1]) * instance[0] < 0 and instance[0] > 0:
+  if mult_fv(weight, instance[1]) * instance[0] <= 0 and instance[0] > 0:
     add_fv(weight, instance[1])
-  elif mult_fv(weight, instance[1]) * instance[0] < 0 and instance[0] < 0:
+  elif mult_fv(weight, instance[1]) * instance[0] <= 0 and instance[0] < 0:
     sub_fv(weight, instance[1])
   else:
-    raise RuntimeError("maybe invalid label: {}".format(instance[0]))
+    debug("weight was not updated.")
+
+def evaluate(weight, instances):
+  num_of_correct_answers = sum(mult_fv(weight, instance[1]) * instance[0] > 0
+      for instance in instances)
+  return (
+        num_of_correct_answers,
+        len(instances),
+        num_of_correct_answers / len(instances)
+      )
 
 
 # main routine
@@ -55,18 +62,26 @@ def update_weight(weight, instance):
 if __name__ == "__main__":
   assert len(sys.argv) == 3, \
       "usage: {} <train data> <test data>".format(sys.argv[0])
-  train_data, max_index = read_data(sys.argv[1])
-  test_data, test_max_index = read_data(sys.argv[2])
-  #debug(train_data, max_index)
-  weight = [0] * (max_index + 1)
 
-  print(train_data[0])
-  add_fv(weight, train_data[0][1])
-  print(weight)
-  add_fv(weight, train_data[1][1])
-  sub_fv(weight, train_data[2][1])
-  print(weight)
-  print(mult_fv(weight, train_data[2][1]))
-  x = [1, 1, 1, 1]
-  update_weight(x, (1, [(3, -2), (2, -2), (1, -2)]))
-  print(x)
+  # process train data
+  train_instances, train_max_index = read_data(sys.argv[1])
+  weight = [0] * (train_max_index + 1)
+  for instance in train_instances:
+    update_weight(weight, instance)
+  debug(weight)
+
+  # process test data
+  test_instances, test_max_index = read_data(sys.argv[2])
+  print(*evaluate(weight, test_instances))
+
+  #if DEBUG:
+  #  debug(train_data[0])
+  #  add_fv(weight, train_data[0][1])
+  #  debug(weight)
+  #  add_fv(weight, train_data[1][1])
+  #  sub_fv(weight, train_data[2][1])
+  #  debug(weight)
+  #  debug(mult_fv(weight, train_data[2][1]))
+  #  x = [1, 1, 1, 1]
+  #  update_weight(x, (1, [(3, -2), (2, -2), (1, -2)]))
+  #  debug(x)

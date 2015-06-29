@@ -7,7 +7,7 @@ import random
 
 # debugger
 
-DEBUG = False
+DEBUG = True
 def debug(*x):
   if DEBUG:
     print(*x, file=sys.stderr)
@@ -15,10 +15,14 @@ def debug(*x):
 
 # functions
 
+def normalize_fv(fv):
+  magnitude = math.sqrt(sum(elem[1] ** 2 for elem in fv))
+  return [(elem[0], elem[1] / magnitude) for elem in fv]
+
 def read_instance(line):
   return (int(line.split()[0]),
-      [(int(fv_elem.split(':')[0]), int(fv_elem.split(':')[1]))
-      for fv_elem in line.split()[1:]])
+      normalize_fv([(int(fv_elem.split(':')[0]), int(fv_elem.split(':')[1]))
+      for fv_elem in line.split()[1:]]))
 
 def read_data(filename):
   with open(filename) as f:
@@ -46,7 +50,8 @@ def update_weight(weight, instance):
   elif mult_fv(weight, instance[1]) * instance[0] <= 0 and instance[0] < 0:
     sub_fv(weight, instance[1])
   else:
-    debug("weight was not updated.")
+    #debug("weight was not updated.")
+    pass
 
 def evaluate(weight, instances):
   num_of_correct_answers = sum(mult_fv(weight, instance[1]) * instance[0] > 0
@@ -71,9 +76,10 @@ if __name__ == "__main__":
   weight = [0] * (train_max_index + 1)
 
   random.shuffle(train_instances)
+  #debug(train_instances[0])
   for instance in train_instances:
     update_weight(weight, instance)
-  debug("weight =", weight)
+  #debug("weight =", weight)
 
   # process test data
   test_instances, test_max_index = read_data(sys.argv[2])

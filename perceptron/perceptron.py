@@ -13,6 +13,12 @@ def debug(*x):
     print(*x, file=sys.stderr)
 
 
+# constants
+
+RANDOM_SEED = 12345
+IPROD_THRESHOLD = 0.1
+
+
 # functions
 
 def normalize_fv(fv):
@@ -30,28 +36,40 @@ def read_data(filename):
         for line in f.read().split('\n') if line]
   return (instances, max(len(instance[1]) for instance in instances))
 
-def add_fv(weight, fv):
+def __add_fv(weight, fv):
   assert len(weight) >= len(fv)
   for fv_elem in fv:
     weight[fv_elem[0]] += fv_elem[1]
 
-def sub_fv(weight, fv):
+def add_fv(weight, fv, nupdates):
+  __add_fv(weight, [(elem[0], nupdates * elem[1]) for elem in fv])
+
+def __sub_fv(weight, fv):
   assert len(weight) >= len(fv)
   for fv_elem in fv:
     weight[fv_elem[0]] -= fv_elem[1]
+
+def sub_fv(weight, fv, nupdates):
+  __sub_fv(weight, [(elem[0], nupdates * elem[1]) for elem in fv])
 
 def mult_fv(wight, fv):
   assert len(weight) >= len(fv)
   return sum(x * y[1] for x, y in zip(weight, fv))
 
-def update_weight(weight, instance):
-  if mult_fv(weight, instance[1]) * instance[0] <= 0 and instance[0] > 0:
-    add_fv(weight, instance[1])
-  elif mult_fv(weight, instance[1]) * instance[0] <= 0 and instance[0] < 0:
-    sub_fv(weight, instance[1])
+def update_weight(weight, instance, nupdates):
+  iprod = mult_fv(weight, instance[1])
+  if (iprod * instance[0] <= 0 or abs(iprod) < IPROD_THRESHOLD) \
+      and instance[0] > 0:
+    add_fv(weight, instance[1], nupdates)
+  elif (iprod * instance[0] <= 0 or abs(iprod) < IPROD_THRESHOLD) \
+      and instance[0] < 0:
+    sub_fv(weight, instance[1], nupdates)
   else:
-    #debug("weight was not updated.")
     pass
+    #debug("weight was not updated.")
+
+def averaged_weight(weight, tmp_weight, nupdates):
+  return [x - y / (nupdates + 1) for x, y in zip(weight, tmp_weight)]
 
 def evaluate(weight, instances):
   num_of_correct_answers = sum(mult_fv(weight, instance[1]) * instance[0] > 0
@@ -69,17 +87,20 @@ if __name__ == "__main__":
   assert len(sys.argv) == 3, \
       "usage: {} <train data> <test data>".format(sys.argv[0])
 
-  random.seed(1234)
+  random.seed(RANDOM_SEED)
 
   # process train data
   train_instances, train_max_index = read_data(sys.argv[1])
-  weight = [0] * (train_max_index + 1)
 
   random.shuffle(train_instances)
-  #debug(train_instances[0])
+  weight = [0] * (train_max_index + 1)
+  tmp_weight = weight
+  nupdates = 0
   for instance in train_instances:
-    update_weight(weight, instance)
-  debug("weight =", weight)
+    nupdates += 1
+    update_weight(weight, instance, 1)
+    update_weight(tmp_weight, instance, nupdates)
+  #debug("weight =", weight)
 
   # process test data
   test_instances, test_max_index = read_data(sys.argv[2])

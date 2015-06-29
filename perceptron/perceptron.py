@@ -48,7 +48,7 @@ def update_weight(weight, instance):
   elif mult_fv(weight, instance[1]) * instance[0] < 0 and instance[0] < 0:
     sub_fv(weight, instance[1])
   else:
-    raise RuntimeError("invalid label: {}".format(instance[0]))
+    raise RuntimeError("maybe invalid label: {}".format(instance[0]))
 
 
 # main routine

@@ -2,6 +2,7 @@
 
 import sys
 import math
+import random
 
 
 # debugger
@@ -63,9 +64,13 @@ if __name__ == "__main__":
   assert len(sys.argv) == 3, \
       "usage: {} <train data> <test data>".format(sys.argv[0])
 
+  random.seed(1234)
+
   # process train data
   train_instances, train_max_index = read_data(sys.argv[1])
   weight = [0] * (train_max_index + 1)
+
+  random.shuffle(train_instances)
   for instance in train_instances:
     update_weight(weight, instance)
   debug(weight)

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+import math
 
 
 # debugger
@@ -14,7 +15,7 @@ def debug(*x):
 # functions
 
 def read_instance(line):
-  return (line.split()[0],
+  return (int(line.split()[0]),
       [(int(fv_elem.split(':')[0]), int(fv_elem.split(':')[1]))
       for fv_elem in line.split()[1:]])
 
@@ -41,6 +42,14 @@ def mult_fv(wight, fv):
   assert len(weight) >= len(fv)
   return sum(x * y[1] for x, y in zip(weight, fv))
 
+def update_weight(weight, instance):
+  if mult_fv(weight, instance[1]) * instance[0] < 0 and instance[0] > 0:
+    add_fv(weight, instance[1])
+  elif mult_fv(weight, instance[1]) * instance[0] < 0 and instance[0] < 0:
+    sub_fv(weight, instance[1])
+  else:
+    raise RuntimeError("invalid label: {}".format(instance[0]))
+
 
 # main routine
 
@@ -50,10 +59,13 @@ if __name__ == "__main__":
   #debug(train_data, max_index)
   weight = [0] * (max_index + 1)
 
-  print(train_data[0][1])
+  print(train_data[0])
   add_fv(weight, train_data[0][1])
   print(weight)
   add_fv(weight, train_data[1][1])
   sub_fv(weight, train_data[2][1])
   print(weight)
   print(mult_fv(weight, train_data[2][1]))
+  x = [1, 1, 1, 1]
+  update_weight(x, (1, [(3, -2), (2, -2), (1, -2)]))
+  print(x)

@@ -73,11 +73,11 @@ if __name__ == "__main__":
   random.shuffle(train_instances)
   for instance in train_instances:
     update_weight(weight, instance)
-  debug(weight)
+  debug("weight =", weight)
 
   # process test data
   test_instances, test_max_index = read_data(sys.argv[2])
-  print(*evaluate(weight, test_instances))
+  print("evaluation result:", *evaluate(weight, test_instances))
 
   #if DEBUG:
   #  debug(train_data[0])

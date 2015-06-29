@@ -20,8 +20,8 @@ def normalize_fv(fv):
   return [(elem[0], elem[1] / magnitude) for elem in fv]
 
 def read_instance(line):
-  return (int(line.split()[0]),
-      normalize_fv([(int(fv_elem.split(':')[0]), int(fv_elem.split(':')[1]))
+  return (int(line.split()[0]), normalize_fv([(0, 1)]
+      + [(int(fv_elem.split(':')[0]), int(fv_elem.split(':')[1]))
       for fv_elem in line.split()[1:]]))
 
 def read_data(filename):
@@ -79,7 +79,7 @@ if __name__ == "__main__":
   #debug(train_instances[0])
   for instance in train_instances:
     update_weight(weight, instance)
-  #debug("weight =", weight)
+  debug("weight =", weight)
 
   # process test data
   test_instances, test_max_index = read_data(sys.argv[2])

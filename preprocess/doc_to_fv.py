@@ -33,8 +33,9 @@ def doc_to_fv(doc_file):
         if word not in wordIndex:
           wordIndex[word] = len(wordIndex) + 1
   
-  featureVector = " ".join(["{}:{}".format(wordIndex[word], count)
-      for word, count in wordCount.items()])
+  featureVector = " ".join(["{}:{}".format(index, wordCount[word])
+      for word, index in sorted(wordIndex.items(), key=operator.itemgetter(1))
+      if word in wordCount])
 
   wordIndex.close()
 

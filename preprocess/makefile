@@ -19,7 +19,10 @@ train_and_test_data: ${POS_DATA} ${NEG_DATA}
 	make -C txt
 
 clean:
-	$(RM) *.db *.pyc ${TARGET_FILES}
+	${RM} *.db *.pyc
+
+clean_data:
+	${RM} ${TARGET_FILES}
 	make -C txt clean
 
 

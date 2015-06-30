@@ -8,35 +8,35 @@ import operator
 import os
 
 
-def doc_to_fv(doc_file):
-  COUNT_DB_FILE = 'word_count_{}.db'.format(os.getpid())
-  INDEX_DB_FILE = 'word_index_{}.db'.format(os.getpid())
+DEBUG = True
 
-  wordCount = shelve.open(COUNT_DB_FILE)
+def debug(*x):
+  if DEBUG:
+    print(*x, file=sys.stderr)
+
+
+def doc_to_fv(doc_file):
+  INDEX_DB_FILE = 'word_index.db'
+
+  wordCount = {}
   wordIndex = shelve.open(INDEX_DB_FILE)
 
   with open(doc_file) as f:
+    debug("processing file,", doc_file)
     for sentence in map(nltk.tokenize.word_tokenize,
               nltk.tokenize.sent_tokenize(f.read())):
       for word in sentence:
-        assert len(wordCount) == len(wordIndex)
         if word in wordCount:
-          assert word in wordIndex
           wordCount[word] += 1
         else:
-          assert word not in wordIndex
           wordCount[word] = 1
+        if word not in wordIndex:
           wordIndex[word] = len(wordIndex) + 1
   
-  featureVector = " ".join(["{}:{}".format(index, wordCount[word])
-      for word, index in sorted(wordIndex.items(),
-      key=operator.itemgetter(1))])
-  
-  wordCount.close()
-  wordIndex.close()
+  featureVector = " ".join(["{}:{}".format(wordIndex[word], count)
+      for word, count in wordCount.items()])
 
-  os.remove(COUNT_DB_FILE)
-  os.remove(INDEX_DB_FILE)
+  wordIndex.close()
 
   return featureVector
 

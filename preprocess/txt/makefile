@@ -6,7 +6,7 @@ TEST_DATA = test_cv0.txt
 TARGET_FILES = ${TRAIN_DATA} ${TEST_DATA}
 
 
-all: ${DATA_FILES}
+all: ${TARGET_FILES}
 
 ${TRAIN_DATA}: ${POS_DATA} ${NEG_DATA}
 	head -n 900 ${POS_DATA} > ${.TARGET}
@@ -17,7 +17,7 @@ ${TEST_DATA}: ${POS_DATA} ${NEG_DATA}
 	tail -n 100 ${NEG_DATA} >> ${.TARGET}
 
 clean:
-	${RM} -rf ${TARGET_FILES}
+	${RM} ${TARGET_FILES}
 
 
 .PHONY: all clean

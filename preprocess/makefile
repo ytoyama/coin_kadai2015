@@ -4,10 +4,10 @@ POS_DIR = txt_sentoken/pos
 NEG_DIR = txt_sentoken/neg
 POS_DATA = txt/pos_data.txt
 NEG_DATA = txt/neg_data.txt
-ALL_DATA_FILES = ${POS_DATA} ${NEG_DATA} train_and_test_data
+TARGET_FILES = ${POS_DATA} ${NEG_DATA}
 
 
-all: ${ALL_DATA_FILES}
+all: ${TARGET_FILES} train_and_test_data
 
 ${POS_DATA}:
 	${CREATE_DATA} 1 ${POS_DIR} > ${.TARGET}
@@ -19,7 +19,8 @@ train_and_test_data: ${POS_DATA} ${NEG_DATA}
 	make -C txt
 
 clean:
-	$(RM) *.db *.pyc
+	$(RM) *.db *.pyc ${TARGET_FILES}
+	make -C txt clean
 
 
 .PHONY: all clean train_and_test_data

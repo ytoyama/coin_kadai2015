@@ -21,8 +21,6 @@ def fail(message):
 
 # constants
 
-g_RANDOM_SEED = 12345
-
 g_AVERAGED_PERCEPTRON = True
 g_BIAS = 1
 g_NORMALIZE_FV = True
@@ -52,7 +50,7 @@ def read_data(filename):
   max_fv_index = -1 # dummy value which must be less than 1
   for instance in instances:
     for fv_elem in instance[1]:
-      max_fv_index = max_fv_index if max_fv_index >= fv_elem[0] else fv_elem[0]
+      max_fv_index = max(max_fv_index, fv_elem[0])
   return instances, max_fv_index
 
 def __add_fv(weight, fv):
@@ -164,7 +162,7 @@ def main(args):
 
   # here we go
 
-  random.seed(g_RANDOM_SEED)
+  random.seed()
 
   # process train data
   train_instances, train_max_index = read_data(TRAIN_FILE)
@@ -172,10 +170,10 @@ def main(args):
   random.shuffle(train_instances)
   weight = [0] * (train_max_index + 1)
   tmp_weight = copy.deepcopy(weight)
-  sum_weight = copy.deepcopy(weight) # DEBUG
-  nupdates = 0
+  #sum_weight = copy.deepcopy(weight) # DEBUG
   #debug(train_instances)
 
+  nupdates = 0
   for instance in train_instances:
     nupdates += 1
     #debug("nupdates =", nupdates)
@@ -189,7 +187,7 @@ def main(args):
 
   if g_AVERAGED_PERCEPTRON:
     weight = averaged_weight(weight, tmp_weight, nupdates)
-  #sum_weight = [x / (nupdates + 1) for x in sum_weight]
+  #sum_weight = [x / (nupdates + 1) for x in sum_weight] # DEBUG
   #debug("sum_weight =", sum_weight) # DEBUG
   #debug("ave_weight =", ave_weight)
 

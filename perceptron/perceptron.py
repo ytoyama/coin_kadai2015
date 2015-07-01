@@ -26,6 +26,7 @@ g_BIAS = 1
 g_NORMALIZE_FV = True
 g_MARGIN_THRESHOLD = 0.1
 g_UPDATE_NUM = None
+g_ONLY_ACCURACY = True
 
 
 # functions
@@ -195,7 +196,10 @@ def main(args):
 
   # process test data
   test_instances, _ = read_data(TEST_FILE)
-  print("evaluation result:", *evaluate(weight, test_instances))
+  if g_ONLY_ACCURACY:
+    print(evaluate(weight, test_instances)[2])
+  else:
+    print("evaluation result:", *evaluate(weight, test_instances))
 
 
 if __name__ == "__main__":

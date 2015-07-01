@@ -154,18 +154,6 @@ def main(args):
   test_instances, _ = read_data(TEST_FILE)
   print("evaluation result:", *evaluate(ave_weight, test_instances))
 
-  #if DEBUG:
-  #  debug(train_data[0])
-  #  add_fv(weight, train_data[0][1])
-  #  debug(weight)
-  #  add_fv(weight, train_data[1][1])
-  #  sub_fv(weight, train_data[2][1])
-  #  debug(weight)
-  #  debug(mult_fv(weight, train_data[2][1]))
-  #  x = [1, 1, 1, 1]
-  #  update_weight(x, (1, [(3, -2), (2, -2), (1, -2)]))
-  #  debug(x)
-
 
 if __name__ == "__main__":
   main(sys.argv)

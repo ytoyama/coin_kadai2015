@@ -4,6 +4,7 @@ import sys
 import math
 import random
 import copy
+import getopt
 
 
 # debugger
@@ -16,8 +17,13 @@ def debug(*x):
 
 # constants
 
-RANDOM_SEED = 12345
-IPROD_THRESHOLD = 0.1
+g_RANDOM_SEED = 12345
+
+g_AVERAGED_PERCEPTRON = True
+g_BIAS = 1
+g_NORMALIZE_FV = True
+g_MARGIN_THRESHOLD = 0.1
+g_UPDATE_NUM = None
 
 
 # functions
@@ -27,16 +33,23 @@ def normalize_fv(fv):
   return [(elem[0], elem[1] / magnitude) for elem in fv]
 
 def read_instance(line):
-  return (int(line.split()[0]), normalize_fv([(0, 1)]
-      + [(int(fv_elem.split(':')[0]), int(fv_elem.split(':')[1]))
-      for fv_elem in line.split()[1:]]))
+  instance = int(line.split()[0]), \
+      [(0, 1)] + [(int(fv_elem.split(':')[0]), int(fv_elem.split(':')[1]))
+      for fv_elem in line.split()[1:]]
+  if g_NORMALIZE_FV:
+    return instance[0], normalize_fv(instance[1])
+  else:
+    return instance
 
 def read_data(filename):
   with open(filename) as f:
     instances = [read_instance(line)
         for line in f.read().split('\n') if line]
-  return (instances, max(len(instance[1]) - 1 for instance in instances))
-  # instance[1] - 1 is for max index of data itself (without bias term)
+  max_fv_index = -1 # dummy value which must be less than 1
+  for instance in instances:
+    for fv_elem in instance[1]:
+      max_fv_index = max_fv_index if max_fv_index >= fv_elem[0] else fv_elem[0]
+  return instances, max_fv_index
 
 def __add_fv(weight, fv):
   assert len(weight) >= len(fv)
@@ -56,16 +69,18 @@ def sub_fv(weight, fv, nupdates):
 
 def mult_fv(weight, fv):
   assert len(weight) >= len(fv)
-  return sum(x * y[1] for x, y in zip(weight, fv))
+  # test data can have indeces larger than weight's max index.
+  # so ignore them.
+  return sum(weight[elem[0]] * elem[1] for elem in fv if elem[0] < len(weight))
 
 def update_weight(weight, tmp_weight, instance, nupdates):
   iprod = mult_fv(weight, instance[1])
-  if (iprod * instance[0] <= 0 or abs(iprod) < IPROD_THRESHOLD) \
+  if (iprod * instance[0] <= 0 or abs(iprod) < g_MARGIN_THRESHOLD) \
       and instance[0] > 0:
     #debug("addition performed.")
     add_fv(weight, instance[1], 1)
     add_fv(tmp_weight, instance[1], nupdates)
-  elif (iprod * instance[0] <= 0 or abs(iprod) < IPROD_THRESHOLD) \
+  elif (iprod * instance[0] <= 0 or abs(iprod) < g_MARGIN_THRESHOLD) \
       and instance[0] < 0:
     #debug("substruction performed.")
     sub_fv(weight, instance[1], 1)
@@ -89,17 +104,30 @@ def evaluate(weight, instances):
 
 # main routine
 
-def main():
-  assert len(sys.argv) == 3, \
-      "usage: {} <train data> <test data>".format(sys.argv[0])
+def main(args):
+  EXEC_NAME = args[0]
 
-  random.seed(RANDOM_SEED)
+  try:
+    opts, args = getopt.getopt(args[1:], 'ab:m:nu:')
+  except:
+    print("you are stupid!")
+
+  if len(args) != 2:
+    print("usage: {} <train data> <test data>".format(EXEC_NAME))
+
+  TRAIN_FILE = args[0]
+  TEST_FILE = args[1]
+  del args
+
+  # here we go
+
+  random.seed(g_RANDOM_SEED)
 
   # process train data
-  train_instances, train_max_index = read_data(sys.argv[1])
+  train_instances, train_max_index = read_data(TRAIN_FILE)
 
 
-  #random.shuffle(train_instances)
+  random.shuffle(train_instances)
   weight = [0] * (train_max_index + 1)
   tmp_weight = copy.deepcopy(weight)
   sum_weight = copy.deepcopy(weight) # DEBUG
@@ -112,10 +140,10 @@ def main():
     update_weight(weight, tmp_weight, instance, nupdates)
     #debug("weight =", weight)
     #debug("tmp_weight =", tmp_weight)
-    sum_weight = [sum(x) for x in zip(sum_weight, weight)] # DEBUG
+    #sum_weight = [sum(x) for x in zip(sum_weight, weight)] # DEBUG
     #debug("sum_weight =", sum_weight)
 
-  sum_weight = [x / (nupdates + 1) for x in sum_weight]
+  #sum_weight = [x / (nupdates + 1) for x in sum_weight]
   ave_weight = averaged_weight(weight, tmp_weight, nupdates)
   #debug("sum_weight =", sum_weight) # DEBUG
   #debug("ave_weight =", ave_weight)
@@ -123,8 +151,8 @@ def main():
   #debug("tmp_weight =", tmp_weight)
 
   # process test data
-  test_instances, test_max_index = read_data(sys.argv[2])
-  print("evaluation result:", *evaluate(weight, test_instances))
+  test_instances, _ = read_data(TEST_FILE)
+  print("evaluation result:", *evaluate(ave_weight, test_instances))
 
   #if DEBUG:
   #  debug(train_data[0])
@@ -140,4 +168,4 @@ def main():
 
 
 if __name__ == "__main__":
-  main()
+  main(sys.argv)

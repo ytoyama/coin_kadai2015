@@ -1,11 +1,23 @@
+RM = rm -rf
+
 PYTHON = python3
 PYTHON_PROG = perceptron.py
 TRAIN_FILE = train_cv0.txt
 TEST_FILE = test_cv0.txt
 
+CSV_DIR = csv
+
 
 all:
 	@echo nothing to do
+
+csv:
+	@echo "# generating csv data"
+	[ -d ${CSV_DIR} ] || mkdir ${CSV_DIR}
+	sh csv.sh
+
+clean_csv:
+	${RM} ${CSV_DIR}/*.csv
 
 test_options:
 	@echo "# no option"
@@ -52,4 +64,5 @@ test_options:
 	${PYTHON} ${PYTHON_PROG} -u 10000 ${TRAIN_FILE} ${TEST_FILE}
 	${PYTHON} ${PYTHON_PROG} -u 15000 ${TRAIN_FILE} ${TEST_FILE}
 
-.PHONY: test
+
+.PHONY: all csv clean_csv test_options

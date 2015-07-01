@@ -178,30 +178,19 @@ def main(args):
   #sum_weight = copy.deepcopy(weight) # DEBUG
   #debug(train_instances)
 
-  #nupdates = 0
-  #for instance in train_instances:
-  #  nupdates += 1
-  #  #debug("nupdates =", nupdates)
-  #  if nupdates > g_UPDATE_NUM:
-  #    break
-  #  update_weight(weight, tmp_weight, instance, nupdates)
-  #  #debug("weight =", weight)
-  #  #debug("tmp_weight =", tmp_weight)
-  #  #sum_weight = [sum(x) for x in zip(sum_weight, weight)] # DEBUG
-  #  #debug("sum_weight =", sum_weight)
-
   for i in range(g_UPDATE_NUM):
     update_weight(
         weight,
         tmp_weight,
         train_instances[i % len(train_instances)],
         i + 1)
+    #sum_weight = [sum(x) for x in zip(sum_weight, weight)] # DEBUG
   nupdates = i + 1
 
   if g_AVERAGED_PERCEPTRON:
     weight = averaged_weight(weight, tmp_weight, nupdates)
   #sum_weight = [x / (nupdates + 1) for x in sum_weight] # DEBUG
-  #debug("sum_weight =", sum_weight) # DEBUG
+  #debug("sum_weight =", sum_weight)
   #debug("ave_weight =", ave_weight)
 
   # process test data

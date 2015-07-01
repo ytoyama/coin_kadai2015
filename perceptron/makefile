@@ -48,7 +48,7 @@ test_options:
 	${PYTHON} ${PYTHON_PROG} -m 1 ${TRAIN_FILE} ${TEST_FILE}
 	@echo "## not normarized feature vectors"
 	${PYTHON} ${PYTHON_PROG} -n ${TRAIN_FILE} ${TEST_FILE}
-	@echo "## limited max num of updates"
+	@echo "## num of updates"
 	${PYTHON} ${PYTHON_PROG} -u 1 ${TRAIN_FILE} ${TEST_FILE}
 	${PYTHON} ${PYTHON_PROG} -u 50 ${TRAIN_FILE} ${TEST_FILE}
 	${PYTHON} ${PYTHON_PROG} -u 100 ${TRAIN_FILE} ${TEST_FILE}

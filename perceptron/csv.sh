@@ -4,10 +4,10 @@ CSV_DIR=csv
 TRAIN_DATA=train_cv0.txt
 TEST_DATA=test_cv0.txt
 
-N_TRAIN_INSTANCES=$(wc -l "$TRAIN_DATA")
-N_UPDATES=$(expr $N_UPDATES \* 8)
+N_TRAIN_INSTANCES=$(echo $(wc -l "$TRAIN_DATA") | cut -f 1 -d ' ')
+N_UPDATE=$(expr $N_TRAIN_INSTANCES \* 8)
 
-UPDATES_CSV=updates.csv
+UPDATE_CSV=updates.csv
 BIAS_CSV=bias.csv
 MARGIN_CSV=margin.csv
 
@@ -16,7 +16,7 @@ MARGIN_CSV=margin.csv
 
 for file in "$UPDATE_CSV" "$BIAS_CSV" "$MARGIN_CSV"
 do
-  : > "$file"
+  : > "$CSV_DIR/$file"
 done
 
 
@@ -26,7 +26,7 @@ echo creating "$CSV_DIR/$UPDATE_CSV"
 for num in $(seq 1 8)
 do
   echo "$num,$(python3 perceptron.py -u $(expr $N_TRAIN_INSTANCES \* $num) \
-      "$TRAIN_DATA" "$TEST_DATA")" >> "$CSV_DIR/$UPDATES_CSV"
+      "$TRAIN_DATA" "$TEST_DATA")" >> "$CSV_DIR/$UPDATE_CSV"
 done
 
 
@@ -35,7 +35,7 @@ done
 echo creating "$CSV_DIR/$BIAS_CSV"
 for num in $(seq 0 0.2 3)
 do
-  echo "$num,$(python3 perceptron.py -b $num -u $N_UPDATES \
+  echo "$num,$(python3 perceptron.py -b $num -u $N_UPDATE \
       "$TRAIN_DATA" "$TEST_DATA")" >> "$CSV_DIR/$BIAS_CSV"
 done
 
@@ -45,6 +45,6 @@ done
 echo creating "$CSV_DIR/$MARGIN_CSV"
 for num in $(seq 0 0.2 3)
 do
-  echo "$num,$(python3 perceptron.py -m $num -u $N_UPDATES \
+  echo "$num,$(python3 perceptron.py -m $num -u $N_UPDATE \
       "$TRAIN_DATA" "$TEST_DATA")" >> "$CSV_DIR/$MARGIN_CSV"
 done

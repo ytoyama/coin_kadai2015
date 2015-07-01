@@ -14,6 +14,10 @@ def debug(*x):
   if DEBUG:
     print(*x, file=sys.stderr)
 
+def fail(message):
+  print(message, file=sys.stderr)
+  exit(1)
+
 
 # constants
 
@@ -23,7 +27,7 @@ g_AVERAGED_PERCEPTRON = True
 g_BIAS = 1
 g_NORMALIZE_FV = True
 g_MARGIN_THRESHOLD = 0.1
-g_UPDATE_NUM = None
+g_MAX_UPDATE_NUM = 100000
 
 
 # functions
@@ -34,7 +38,7 @@ def normalize_fv(fv):
 
 def read_instance(line):
   instance = int(line.split()[0]), \
-      [(0, 1)] + [(int(fv_elem.split(':')[0]), int(fv_elem.split(':')[1]))
+      [(0, g_BIAS)] + [(int(fv_elem.split(':')[0]), int(fv_elem.split(':')[1]))
       for fv_elem in line.split()[1:]]
   if g_NORMALIZE_FV:
     return instance[0], normalize_fv(instance[1])
@@ -109,11 +113,50 @@ def main(args):
 
   try:
     opts, args = getopt.getopt(args[1:], 'ab:m:nu:')
+  except getopt.GetoptError as err:
+    fail(err)
   except:
-    print("you are stupid!")
+    fail_unknown()
+
+  try:
+    for opt, value in opts:
+      if opt in {'-a', '-n'} and value:
+        fail("Option, {} does not need any option argument.".format(opt))
+      if opt in {'-b', '-m', '-u'} and not value:
+        fail("Option, {} needs an option argument.".format(opt))
+      if opt == '-a':
+        global g_AVERAGED_PERCEPTRON
+        g_AVERAGED_PERCEPTRON = False
+      elif opt == '-b':
+        global g_BIAS
+        g_BIAS = float(value)
+        if g_BIAS < 0:
+          fail("bias for feature vectors cannot be any negative number.")
+      elif opt == '-m':
+        global g_MARGIN_THRESHOLD
+        g_MARGIN_THRESHOLD = float(value)
+        if g_MARGIN_THRESHOLD < 0:
+          fail("Threshold of margin cannot be any negative number.")
+      elif opt == '-n':
+        global g_NORMALIZE_FV
+        g_NORMALIZE_FV = False
+      elif opt == '-u':
+        global g_MAX_UPDATE_NUM
+        g_MAX_UPDATE_NUM = int(value)
+        if g_MAX_UPDATE_NUM <= 0:
+          fail("Max num of updates must be a positive number.")
+      else:
+        fail("unknown option, {} is detected. (maybe due to programer's error)"
+            .format(opt))
+  except ValueError as err:
+    fail(err)
+  except Exception as err:
+    fail("Unknown error caught!\n{}".format(err))
+
+  del opts
 
   if len(args) != 2:
-    print("usage: {} <train data> <test data>".format(EXEC_NAME))
+    fail("usage: {} <train data> <test data>".format(EXEC_NAME))
 
   TRAIN_FILE = args[0]
   TEST_FILE = args[1]
@@ -126,7 +169,6 @@ def main(args):
   # process train data
   train_instances, train_max_index = read_data(TRAIN_FILE)
 
-
   random.shuffle(train_instances)
   weight = [0] * (train_max_index + 1)
   tmp_weight = copy.deepcopy(weight)
@@ -137,22 +179,23 @@ def main(args):
   for instance in train_instances:
     nupdates += 1
     #debug("nupdates =", nupdates)
+    if nupdates > g_MAX_UPDATE_NUM:
+      break
     update_weight(weight, tmp_weight, instance, nupdates)
     #debug("weight =", weight)
     #debug("tmp_weight =", tmp_weight)
     #sum_weight = [sum(x) for x in zip(sum_weight, weight)] # DEBUG
     #debug("sum_weight =", sum_weight)
 
+  if g_AVERAGED_PERCEPTRON:
+    weight = averaged_weight(weight, tmp_weight, nupdates)
   #sum_weight = [x / (nupdates + 1) for x in sum_weight]
-  ave_weight = averaged_weight(weight, tmp_weight, nupdates)
   #debug("sum_weight =", sum_weight) # DEBUG
   #debug("ave_weight =", ave_weight)
-  #debug("weight =", weight)
-  #debug("tmp_weight =", tmp_weight)
 
   # process test data
   test_instances, _ = read_data(TEST_FILE)
-  print("evaluation result:", *evaluate(ave_weight, test_instances))
+  print("evaluation result:", *evaluate(weight, test_instances))
 
 
 if __name__ == "__main__":

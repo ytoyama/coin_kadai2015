@@ -18,6 +18,10 @@ def fail(message):
   print(message, file=sys.stderr)
   exit(1)
 
+def verbose(message):
+  if g_VERBOSE:
+    print(message, file=sys.stderr)
+
 
 # constants
 
@@ -27,6 +31,7 @@ g_NORMALIZE_FV = True
 g_MARGIN_THRESHOLD = 0.1
 g_UPDATE_NUM = None
 g_ONLY_ACCURACY = True
+g_VERBOSE = False
 
 
 # functions
@@ -111,7 +116,7 @@ def main(args):
   EXEC_NAME = args[0]
 
   try:
-    opts, args = getopt.getopt(args[1:], 'ab:m:nu:')
+    opts, args = getopt.getopt(args[1:], 'ab:m:nu:v')
   except getopt.GetoptError as err:
     fail(err)
   except:
@@ -144,6 +149,9 @@ def main(args):
         g_UPDATE_NUM = int(value)
         if g_UPDATE_NUM <= 0:
           fail("Max num of updates must be a positive number.")
+      elif opt == '-v':
+        global g_VERBOSE
+        g_VERBOSE = True
       else:
         fail("unknown option, {} is detected. (maybe due to programer's error)"
             .format(opt))

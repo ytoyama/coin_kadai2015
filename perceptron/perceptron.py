@@ -176,7 +176,7 @@ def main(args):
 
   # here we go
 
-  random.seed()
+  random.seed(42)
 
   # process train data
   train_instances, train_max_index = read_data(TRAIN_FILE)

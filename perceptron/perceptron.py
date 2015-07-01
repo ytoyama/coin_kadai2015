@@ -25,7 +25,7 @@ g_AVERAGED_PERCEPTRON = True
 g_BIAS = 1
 g_NORMALIZE_FV = True
 g_MARGIN_THRESHOLD = 0.1
-g_UPDATE_NUM = 100000
+g_UPDATE_NUM = None
 
 
 # functions
@@ -160,6 +160,11 @@ def main(args):
   TEST_FILE = args[1]
   del args
 
+  if g_UPDATE_NUM == None:
+    with open(TRAIN_FILE) as f:
+      g_UPDATE_NUM = sum(1 for line in f)
+      #debug("g_UPDATE_NUM =", g_UPDATE_NUM)
+
   # here we go
 
   random.seed()
@@ -184,12 +189,14 @@ def main(args):
   #  #debug("tmp_weight =", tmp_weight)
   #  #sum_weight = [sum(x) for x in zip(sum_weight, weight)] # DEBUG
   #  #debug("sum_weight =", sum_weight)
+
   for i in range(g_UPDATE_NUM):
     update_weight(
         weight,
         tmp_weight,
         train_instances[i % len(train_instances)],
         i + 1)
+  nupdates = i + 1
 
   if g_AVERAGED_PERCEPTRON:
     weight = averaged_weight(weight, tmp_weight, nupdates)

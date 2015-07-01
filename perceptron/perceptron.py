@@ -25,7 +25,7 @@ g_AVERAGED_PERCEPTRON = True
 g_BIAS = 1
 g_NORMALIZE_FV = True
 g_MARGIN_THRESHOLD = 0.1
-g_MAX_UPDATE_NUM = 100000
+g_UPDATE_NUM = 100000
 
 
 # functions
@@ -139,9 +139,9 @@ def main(args):
         global g_NORMALIZE_FV
         g_NORMALIZE_FV = False
       elif opt == '-u':
-        global g_MAX_UPDATE_NUM
-        g_MAX_UPDATE_NUM = int(value)
-        if g_MAX_UPDATE_NUM <= 0:
+        global g_UPDATE_NUM
+        g_UPDATE_NUM = int(value)
+        if g_UPDATE_NUM <= 0:
           fail("Max num of updates must be a positive number.")
       else:
         fail("unknown option, {} is detected. (maybe due to programer's error)"
@@ -173,17 +173,23 @@ def main(args):
   #sum_weight = copy.deepcopy(weight) # DEBUG
   #debug(train_instances)
 
-  nupdates = 0
-  for instance in train_instances:
-    nupdates += 1
-    #debug("nupdates =", nupdates)
-    if nupdates > g_MAX_UPDATE_NUM:
-      break
-    update_weight(weight, tmp_weight, instance, nupdates)
-    #debug("weight =", weight)
-    #debug("tmp_weight =", tmp_weight)
-    #sum_weight = [sum(x) for x in zip(sum_weight, weight)] # DEBUG
-    #debug("sum_weight =", sum_weight)
+  #nupdates = 0
+  #for instance in train_instances:
+  #  nupdates += 1
+  #  #debug("nupdates =", nupdates)
+  #  if nupdates > g_UPDATE_NUM:
+  #    break
+  #  update_weight(weight, tmp_weight, instance, nupdates)
+  #  #debug("weight =", weight)
+  #  #debug("tmp_weight =", tmp_weight)
+  #  #sum_weight = [sum(x) for x in zip(sum_weight, weight)] # DEBUG
+  #  #debug("sum_weight =", sum_weight)
+  for i in range(g_UPDATE_NUM):
+    update_weight(
+        weight,
+        tmp_weight,
+        train_instances[i % len(train_instances)],
+        i + 1)
 
   if g_AVERAGED_PERCEPTRON:
     weight = averaged_weight(weight, tmp_weight, nupdates)

@@ -23,8 +23,11 @@ done
 # updates
 
 echo creating "$CSV_DIR/$UPDATE_CSV"
-for num in $(seq 1 8)
+range=$(seq 1 8)
+echo "range =" $range
+for num in $range
 do
+  echo "i = $num"
   echo "$num,$(python3 perceptron.py -u $(expr $N_TRAIN_INSTANCES \* $num) \
       "$TRAIN_DATA" "$TEST_DATA")" >> "$CSV_DIR/$UPDATE_CSV"
 done
@@ -33,8 +36,11 @@ done
 # bias
 
 echo creating "$CSV_DIR/$BIAS_CSV"
-for num in $(seq 0 0.2 3)
+range=$(seq 0 0.2 3)
+echo "range =" $range
+for num in $range
 do
+  echo "i = $num"
   echo "$num,$(python3 perceptron.py -b $num -u $N_UPDATE \
       "$TRAIN_DATA" "$TEST_DATA")" >> "$CSV_DIR/$BIAS_CSV"
 done
@@ -43,8 +49,11 @@ done
 # margin
 
 echo creating "$CSV_DIR/$MARGIN_CSV"
-for num in $(seq 0 0.2 3)
+range=$(seq 0 0.2 3)
+echo "range =" $range
+for num in $range
 do
+  echo "i = $num"
   echo "$num,$(python3 perceptron.py -m $num -u $N_UPDATE \
       "$TRAIN_DATA" "$TEST_DATA")" >> "$CSV_DIR/$MARGIN_CSV"
 done

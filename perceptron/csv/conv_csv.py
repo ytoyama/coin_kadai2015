@@ -1,12 +1,14 @@
 #!/usr/bin/env python2
 
 from __future__ import print_function
-import matplotlib
 import sys
 import os
 import os.path
 import csv
 import re
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 
 
 # debugger
@@ -63,6 +65,15 @@ def main(*args):
           for resultTuple, xyTuple in zip(totalResult, xy)]
     totalResult = [(x, y / len(result[name])) for x, y in totalResult]
     debug(name, totalResult)
+
+    # create image file of graph
+    fig = plt.figure(0)
+    plt.clf()
+    plt.xlabel("value of " + name + " option")
+    plt.ylabel("accuracy")
+    plt.grid()
+    plt.plot([x for x, _ in totalResult], [y for _, y in totalResult])
+    fig.savefig(name + ".png")
 
 
 if __name__ == "__main__":

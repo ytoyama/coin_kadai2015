@@ -6,6 +6,7 @@ TRAIN_FILE = train_cv0.txt
 TEST_FILE = test_cv0.txt
 
 CSV_DIR = csv
+N_CSV = 8
 
 
 all:
@@ -14,7 +15,7 @@ all:
 csv:
 	@echo "# generating csv data"
 	[ -d ${CSV_DIR} ] || mkdir ${CSV_DIR}
-	sh csv.sh
+	sh csv.sh ${N_CSV}
 
 clean_csv:
 	${RM} ${CSV_DIR}/*.csv

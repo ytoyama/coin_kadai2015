@@ -28,6 +28,7 @@ fi
 
 for i_iter in $(seq 1 $numOfIter)
 do
+
   echo "i_iter = $i_iter"
 
   # create new files
@@ -77,3 +78,4 @@ do
   done
 
 done
+

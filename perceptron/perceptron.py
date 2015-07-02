@@ -112,7 +112,7 @@ def evaluate(weight, instances):
 
 # main routine
 
-def main(args):
+def main(*args):
   EXEC_NAME = args[0]
 
   try:
@@ -211,4 +211,4 @@ def main(args):
 
 
 if __name__ == "__main__":
-  main(sys.argv)
+  main(*sys.argv)

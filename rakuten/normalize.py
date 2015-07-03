@@ -1,5 +1,5 @@
 #!/usr/bin/env python2
-# encoding: utf8
+# encoding: utf-8
 
 from __future__ import unicode_literals, print_function
 import re
@@ -70,9 +70,10 @@ def main(*args):
     return
   del args
 
-  with gzip.open(srcFilename, 'rt') as srcFile, \
-      gzip.open(destFilename, 'wt') as destFile:
-    destFile.writelines(normalize_neologd(line) for line in srcFile)
+  with gzip.open(srcFilename, 'rb') as srcFile, \
+      gzip.open(destFilename, 'wb') as destFile:
+    destFile.writelines(normalize_neologd(line).encode('utf-8')
+                        for line in srcFile)
 
 
 if __name__ == "__main__":

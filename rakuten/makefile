@@ -19,7 +19,7 @@ ${NORM_JP_TEXT_FILE}: ${JP_TEXT_FILE}
 	python2 normalize.py ${JP_TEXT_FILE} ${NORM_JP_TEXT_FILE}
 
 clean:
-	${RM} ${ALL_DATA_FILES}
+	${RM} ${ALL_DATA_FILES} *.db
 
 
 .PHONY: clean all

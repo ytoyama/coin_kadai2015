@@ -35,17 +35,17 @@ def main(*args):
   elif len(args) == 1:
     dir = '.'
   else:
-    error("usage: {} [<filename>]".format(args[0]))
+    error("usage: {} [<directory name>]".format(args[0]))
     return
 
   result = {}
-  for filename in os.listdir('.'):
+  for filename in os.listdir(dir):
     if os.path.isfile(filename) and isCsv(filename):
       #debug(filename)
       nIter, name = os.path.splitext(filename)[0].split('_')
       #debug(nIter, name)
       nIter = int(nIter)
-      if name not in result: 
+      if name not in result:
         result[name] = {}
       assert nIter not in result[name]
       with open(filename) as f:
@@ -61,7 +61,7 @@ def main(*args):
       #debug(totalResult)
       #debug(xy)
       assert len(totalResult) == len(xy)
-      totalResult = [(resultTuple[0], resultTuple[1] + xyTuple[1]) 
+      totalResult = [(resultTuple[0], resultTuple[1] + xyTuple[1])
           for resultTuple, xyTuple in zip(totalResult, xy)]
     totalResult = [(x, y / len(result[name])) for x, y in totalResult]
     debug(name, totalResult)

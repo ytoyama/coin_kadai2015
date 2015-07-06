@@ -9,14 +9,15 @@ CSV_DIR = csv
 N_CSV = 8
 
 
-all: csv
 
-csv:
+all: csv csv/img
+
+# touch data files when reproduce csv dir cause it's a dir
+csv: ${TRAIN_FILE} ${TEST_FILE}
 	@echo "# generating csv data"
-	[ -d ${CSV_DIR} ] || mkdir ${CSV_DIR}
 	sh csv.sh ${N_CSV}
 
-img:
+csv/img: csv
 	make -C ${CSV_DIR}
 
 clean:
@@ -63,4 +64,4 @@ test:
 	${PYTHON} ${PYTHON_PROG} -u 15000 ${TRAIN_FILE} ${TEST_FILE}
 
 
-.PHONY: all csv clean_csv test_options
+.PHONY: all clean test

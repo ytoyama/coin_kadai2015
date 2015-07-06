@@ -53,7 +53,6 @@ def main(*args):
             = [(float(x), float(y)) for x, y in list(csv.reader(f))]
   #debug(result)
 
-  totalResult = {}
   for name, iteratedCsv in sorted(result.items()):
     #debug(iteratedCsv.items())
     totalResult = [(x, 0) for x, y in iteratedCsv.items()[0][1]]

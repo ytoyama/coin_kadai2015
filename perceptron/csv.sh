@@ -3,7 +3,10 @@
 TRAPPED_SIGNAL="1 2 3 15"
 
 trap "
-  kill \$allProcs
+  for pid in \$allProcs
+  do
+    kill -0 \$pid > /dev/null 2>&1 && kill \$pid
+  done
   echo \"killed!\" >&2
   exit 1
 " $TRAPPED_SIGNAL

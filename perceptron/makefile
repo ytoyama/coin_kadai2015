@@ -19,8 +19,9 @@ csv:
 img:
 	make -C ${CSV_DIR}
 
-clean_csv:
+clean:
 	${RM} ${CSV_DIR}/*.csv
+	make -C ${CSV_DIR} clean
 
 test:
 	@echo "# no option"

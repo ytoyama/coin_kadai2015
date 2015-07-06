@@ -1,8 +1,7 @@
 RM = rm -rf
 
 
-all:
-	@echo nothing to do
+all: img
 
 img:
 	python2 conv_csv.py

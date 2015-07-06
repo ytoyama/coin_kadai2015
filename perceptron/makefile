@@ -9,8 +9,7 @@ CSV_DIR = csv
 N_CSV = 8
 
 
-all:
-	@echo nothing to do
+all: csv
 
 csv:
 	@echo "# generating csv data"
@@ -20,12 +19,12 @@ csv:
 clean_csv:
 	${RM} ${CSV_DIR}/*.csv
 
-test_options:
+test:
 	@echo "# no option"
 	${PYTHON} ${PYTHON_PROG} ${TRAIN_FILE} ${TEST_FILE}
 	@echo "# invalid options"
 	${PYTHON} ${PYTHON_PROG} -a invalid_arg ${TRAIN_FILE} ${TEST_FILE} || true
-	${PYTHON} ${PYTHON_PROG} -b ${TRAIN_FILE} ${TEST_FILE} || true
+	${PYTHON} ${PYTHON_PROG} -b invalid_arg ${TRAIN_FILE} ${TEST_FILE} || true
 	${PYTHON} ${PYTHON_PROG} -m ${TRAIN_FILE} ${TEST_FILE} || true
 	${PYTHON} ${PYTHON_PROG} -n invalid_arg ${TRAIN_FILE} ${TEST_FILE} || true
 	${PYTHON} ${PYTHON_PROG} -u ${TRAIN_FILE} ${TEST_FILE} || true
@@ -33,13 +32,7 @@ test_options:
 	@echo "## perceptron not averaged"
 	${PYTHON} ${PYTHON_PROG} -a ${TRAIN_FILE} ${TEST_FILE}
 	@echo "## bias"
-	${PYTHON} ${PYTHON_PROG} -b 0 ${TRAIN_FILE} ${TEST_FILE}
-	${PYTHON} ${PYTHON_PROG} -b 0.25 ${TRAIN_FILE} ${TEST_FILE}
-	${PYTHON} ${PYTHON_PROG} -b 0.5 ${TRAIN_FILE} ${TEST_FILE}
-	${PYTHON} ${PYTHON_PROG} -b 0.75 ${TRAIN_FILE} ${TEST_FILE}
-	${PYTHON} ${PYTHON_PROG} -b 1 ${TRAIN_FILE} ${TEST_FILE}
-	${PYTHON} ${PYTHON_PROG} -b 1.5 ${TRAIN_FILE} ${TEST_FILE}
-	${PYTHON} ${PYTHON_PROG} -b 2 ${TRAIN_FILE} ${TEST_FILE}
+	${PYTHON} ${PYTHON_PROG} -b ${TRAIN_FILE} ${TEST_FILE}
 	@echo "## margin"
 	${PYTHON} ${PYTHON_PROG} -m 0 ${TRAIN_FILE} ${TEST_FILE}
 	${PYTHON} ${PYTHON_PROG} -m 0.1 ${TRAIN_FILE} ${TEST_FILE}

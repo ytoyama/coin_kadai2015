@@ -34,27 +34,27 @@ def main(*args):
   del args
 
   nGramIndex = shelve.open(str(N_GRAM) + '_gram_index.db')
-  fv = {}
 
   with gzip.open(filename, 'r') as f: # 'rb' or 'rt' for unicode files?
-    jpSentenceTokenizer = nltk.RegexpTokenizer(u'[^！？。]*[！？。]?')
-    sentences = [sentence.encode(UTF8) for sentence
-        in jpSentenceTokenizer.tokenize(f.readline().decode(UTF8)) if sentence]
-
-  tagger = MeCab.Tagger()
-
-  for sentence in sentences:
-    node = tagger.parseToNode(sentence)
-    node = node.next # ignore the first meanless word
-    while node.next: # ignore the last meanless word
-      if nGram(N_GRAM, node) not in nGramIndex:
-        nGramIndex[nGram(N_GRAM, node)] = len(nGramIndex) + 1
-      if nGramIndex[nGram(N_GRAM, node)] in fv:
-        fv[nGramIndex[nGram(N_GRAM, node)]] += 1
-      else:
-        fv[nGramIndex[nGram(N_GRAM, node)]] = 1
-      node = node.next
-  print(fv)
+    for line in f:
+      fv = {}
+      jpSentenceTokenizer = nltk.RegexpTokenizer(u'[^！？。]*[！？。]?')
+      for sentence in [sentence.encode(UTF8) for sentence
+          in jpSentenceTokenizer.tokenize(line.decode(UTF8))
+          if sentence]:
+        tagger = MeCab.Tagger()
+        node = tagger.parseToNode(sentence).next
+          # ignore the first meanless word
+        while node.next: # ignore the last meanless word
+          if nGram(N_GRAM, node) not in nGramIndex:
+            nGramIndex[nGram(N_GRAM, node)] = len(nGramIndex) + 1
+          if nGramIndex[nGram(N_GRAM, node)] in fv:
+            fv[nGramIndex[nGram(N_GRAM, node)]] += 1
+          else:
+            fv[nGramIndex[nGram(N_GRAM, node)]] = 1
+          node = node.next
+      print(*("{}:{}".format(index, count) for index, count
+          in sorted(fv.items())))
 
   nGramIndex.close()
 

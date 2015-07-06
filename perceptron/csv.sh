@@ -1,5 +1,15 @@
 #!/bin/sh
 
+TRAPPED_SIGNAL="1 2 3 15"
+
+trap "
+  kill \$allProcs
+  echo \"killed!\" >&2
+  exit 1
+" $TRAPPED_SIGNAL
+allProcs=
+
+
 CSV_DIR=csv
 TRAIN_DATA=train_cv0.txt
 TEST_DATA=test_cv0.txt
@@ -9,6 +19,7 @@ N_UPDATE=$(expr $N_TRAIN_INSTANCES \* 8)
 
 UPDATE_CSV=updates.csv
 MARGIN_CSV=margin.csv
+
 
 
 # parse arguments
@@ -49,6 +60,7 @@ do
         "$TRAIN_DATA" "$TEST_DATA")" >> "$outputFile"
     echo "$outputFile updates=$num done!"
   done &
+  allProcs="$allProcs $!"
 
 
   # margin
@@ -63,7 +75,9 @@ do
         "$TRAIN_DATA" "$TEST_DATA")" >> "$outputFile"
     echo "$outputFile margin=$num done!"
   done &
+  allProcs="$allProcs $!"
 
 done
+
 
 wait

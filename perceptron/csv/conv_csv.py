@@ -42,7 +42,7 @@ def main(*args):
   for filename in os.listdir(srcDir):
     if os.path.isfile(filename) and isCsv(filename):
       #debug(filename)
-      nIter, name = os.path.splitext(filename)[0].split('_')
+      nIter, name = os.path.splitext(filename)[0].split('-')
       #debug(nIter, name)
       nIter = int(nIter)
       if name not in result:

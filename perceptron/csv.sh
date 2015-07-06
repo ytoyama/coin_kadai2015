@@ -17,7 +17,7 @@ allProcs=
 
 ## parse arguments
 
-if [ $# == 3 ] && [ $1 -gt 0 ] && [ -f $2 ] && [ -f $3 ]
+if [ $# -eq 3 ] && [ $1 -gt 0 ] && [ -f $2 ] && [ -f $3 ]
 then
   N_ITER=$1
   TRAIN_DATA=$2
@@ -65,6 +65,20 @@ done
 
 
 
+# sub routines
+
+csvFileName() {
+  if [ $# -eq 2 ]
+  then
+    echo "${1}-$2"
+    return
+  else
+    echo "csvFileName(): invalid arguments" >&2
+    exit 1
+  fi
+}
+
+
 # main routine
 
 for i_iter in $(seq 1 $N_ITER)
@@ -74,7 +88,7 @@ do
 
   for file in "$UPDATE_CSV" "$MARGIN_CSV"
   do
-    : > "$CSV_DIR/${i_iter}_$file"
+    : > "$CSV_DIR/$(csvFileName "${i_iter}" "$file")"
   done
 
 
@@ -82,7 +96,7 @@ do
 
   for num in $UPDATE_RANGE
   do
-    outputFile="$CSV_DIR/${i_iter}_$UPDATE_CSV"
+    outputFile="$CSV_DIR/$(csvFileName "${i_iter}" "$UPDATE_CSV")"
     echo "$num,$(python3 perceptron.py -u \
         $(expr $N_TRAIN_INSTANCES \* $num) \
         "$TRAIN_DATA" "$TEST_DATA")" >> "$outputFile"
@@ -95,7 +109,7 @@ do
   
   for num in $MARGIN_RANGE
   do
-    outputFile="$CSV_DIR/${i_iter}_$MARGIN_CSV"
+    outputFile="$CSV_DIR/$(csvFileName "${i_iter}" "$MARGIN_CSV")"
     echo "$num,$(python3 perceptron.py -m $num -u $N_UPDATE \
         "$TRAIN_DATA" "$TEST_DATA")" >> "$outputFile"
     echo "$outputFile margin=$num done!"

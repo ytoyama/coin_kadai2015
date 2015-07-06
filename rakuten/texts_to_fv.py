@@ -40,8 +40,8 @@ def main(*args):
           else:
             fv[wordIndex[node.surface]] = 1
           node = node.next
-    print(*('{}:{}'.format(index, count) for index, count
-        in sorted(fv.items()))) # future print function bug in python2
+      print(*('{}:{}'.format(index, count) for index, count
+          in sorted(fv.items()))) # future print function bug in python2
 
   wordIndex.close()
 

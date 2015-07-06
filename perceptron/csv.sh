@@ -16,13 +16,10 @@ allProcs=
 # configuration
 
 ## parse arguments
-
-if [ $# -eq 3 ] && [ $1 -gt 0 ] && [ -f $2 ] && [ -f $3 ]
+if [ $# -eq 2 ] && [ -f $1 ] && [ -f $2 ]
 then
-  N_ITER=$1
-  TRAIN_DATA=$2
-  TEST_DATA=$3
-  echo "\$N_ITER = $N_ITER"
+  TRAIN_DATA=$1
+  TEST_DATA=$2
   echo "\$TRAIN_DATA = $TRAIN_DATA"
   echo "\$TEST_DATA = $TEST_DATA"
 else
@@ -38,7 +35,9 @@ CSV_DIR=csv
 UPDATE_STR=update
 MARGIN_STR=margin
 
-## define MARGIN_RANGE and UPDATE_RANGE
+## read configuration file
+### define MARGIN_RANGE, UPDATE_RANGE, and N_ITER
+N_ITER=invalid_value
 UPDATE_RANGE=invalid_value
 MARGIN_RANGE=invalid_value
 if [ -f ./config.sh ]
@@ -49,9 +48,9 @@ else
 fi
 echo "\$UPDATE_RANGE = $(echo $UPDATE_RANGE)"
 echo "\$MARGIN_RANGE = $(echo $MARGIN_RANGE)"
+echo "\$N_ITER = $N_ITER"
 
-
-## check if all numbers in UPDATE_RANGE and MARGIN_RANGE
+### check if all numbers in UPDATE_RANGE and MARGIN_RANGE
 for num in $UPDATE_RANGE
 do
   # every num must be a integer
@@ -62,6 +61,7 @@ do
   # every num must be equal to or greater than 0
   expr $num \>= 0 > /dev/null || exit 1
 done
+test $N_ITER -gt 0 || exit 1
 
 
 

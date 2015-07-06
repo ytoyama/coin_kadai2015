@@ -1,2 +1,3 @@
-UPDATE_RANGE=$(seq 1 8)
+UPDATE_RANGE=$(seq 1 4)
 MARGIN_RANGE=$(seq 0 0.2 1)
+N_ITER=4

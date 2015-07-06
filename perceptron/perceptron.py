@@ -50,7 +50,7 @@ def read_instance(line):
     return instance
 
 def read_data(filename):
-  with open(filename) as f:
+  with open(filename, 'r') as f:
     instances = [read_instance(line)
         for line in f.read().split('\n') if line]
   max_fv_index = -1 # dummy value which must be less than 1
@@ -168,7 +168,7 @@ def main(*args):
   del args
 
   if g_UPDATE_NUM == None:
-    with open(TRAIN_FILE) as f:
+    with open(TRAIN_FILE, 'r') as f:
       g_UPDATE_NUM = sum(1 for line in f)
       #debug("g_UPDATE_NUM =", g_UPDATE_NUM)
 

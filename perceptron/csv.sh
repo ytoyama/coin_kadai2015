@@ -53,7 +53,7 @@ do
   # updates
 
   echo creating "$CSV_DIR/$UPDATE_CSV"
-  range=$(seq 1 8)
+  range=$(seq 1 12)
   echo "range =" $range
   for num in $range
   do
@@ -69,7 +69,7 @@ do
   # margin
   
   echo creating "$CSV_DIR/$MARGIN_CSV"
-  range=$(seq 0 0.2 2)
+  range=$(seq 0 0.2 1.6)
   echo "range =" $range
   for num in $range
   do

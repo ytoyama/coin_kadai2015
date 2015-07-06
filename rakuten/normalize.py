@@ -70,10 +70,12 @@ def main(*args):
     return
   del args
 
-  with gzip.open(srcFilename, 'rb') as srcFile, \
-      gzip.open(destFilename, 'wb') as destFile:
-    destFile.writelines(normalize_neologd(line).encode('utf-8')
-                        for line in srcFile)
+  with gzip.open(srcFilename, 'r') as srcFile, \
+      gzip.open(destFilename, 'w') as destFile:
+    for line in srcFile:
+      destFile.write((normalize_neologd(line) + u'\n').encode('utf-8'))
+    #destFile.writelines(normalize_neologd(line).encode('utf-8')
+    #                    for line in srcFile)
 
 
 if __name__ == "__main__":

@@ -28,40 +28,42 @@ fi
 for i_iter in $(seq 1 $numOfIter)
 do
 
-  echo "i_iter = $i_iter"
-
   # create new files
 
   for file in "$UPDATE_CSV" "$MARGIN_CSV"
   do
     : > "$CSV_DIR/${i_iter}_$file"
   done
-  
-  
+
+
   # updates
-  
+
   echo creating "$CSV_DIR/$UPDATE_CSV"
   range=$(seq 1 8)
   echo "range =" $range
   for num in $range
   do
-    echo "i = $num"
-    echo "$num,$(python3 perceptron.py -u $(expr $N_TRAIN_INSTANCES \* $num) \
-        "$TRAIN_DATA" "$TEST_DATA")" >> "$CSV_DIR/${i_iter}_$UPDATE_CSV"
-  done
-  
-  
+    outputFile="$CSV_DIR/${i_iter}_$UPDATE_CSV"
+    echo "$num,$(python3 perceptron.py -u \
+        $(expr $N_TRAIN_INSTANCES \* $num) \
+        "$TRAIN_DATA" "$TEST_DATA")" >> "$outputFile"
+    echo "$outputFile updates=$num done!"
+  done &
+
+
   # margin
   
   echo creating "$CSV_DIR/$MARGIN_CSV"
-  range=$(seq 0 0.2 3)
+  range=$(seq 0 0.2 2)
   echo "range =" $range
   for num in $range
   do
-    echo "i = $num"
+    outputFile="$CSV_DIR/${i_iter}_$MARGIN_CSV"
     echo "$num,$(python3 perceptron.py -m $num -u $N_UPDATE \
-        "$TRAIN_DATA" "$TEST_DATA")" >> "$CSV_DIR/${i_iter}_$MARGIN_CSV"
-  done
+        "$TRAIN_DATA" "$TEST_DATA")" >> "$outputFile"
+    echo "$outputFile margin=$num done!"
+  done &
 
 done
 
+wait

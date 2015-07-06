@@ -22,27 +22,26 @@ def main(*args):
   del args
 
   wordIndex = shelve.open('word_index.db')
-  fv = {}
 
-  with gzip.open(filename, 'r') as f: # 'rb' or 'rt' for unicode files?
-    jpSentenceTokenizer = nltk.RegexpTokenizer(u'[^！？。]*[！？。]?')
-    sentences = [sentence.encode(UTF8) for sentence
-        in jpSentenceTokenizer.tokenize(f.readline().decode(UTF8)) if sentence]
-
-  tagger = MeCab.Tagger()
-
-  for sentence in sentences:
-    node = tagger.parseToNode(sentence)
-    node = node.next # ignore the first meanless word
-    while node.next: # ignore the last meanless word
-      if node.surface not in wordIndex:
-        wordIndex[node.surface] = len(wordIndex) + 1
-      if wordIndex[node.surface] in fv:
-        fv[wordIndex[node.surface]] += 1
-      else:
-        fv[wordIndex[node.surface]] = 1
-      node = node.next
-  print(fv)
+  with gzip.open(filename, 'r') as f: # which for unicode files, 'rb' or 'rt'?
+    for line in f:
+      jpSentenceTokenizer = nltk.RegexpTokenizer(u'[^！？。]*[！？。]?')
+      fv = {}
+      for sentence in [sentence.encode(UTF8) for sentence
+          in jpSentenceTokenizer.tokenize(line.decode(UTF8)) if sentence]:
+        tagger = MeCab.Tagger()
+        node = tagger.parseToNode(sentence).next
+          # ignore the first meanless word
+        while node.next: # ignore the last meanless word
+          if node.surface not in wordIndex:
+            wordIndex[node.surface] = len(wordIndex) + 1
+          if wordIndex[node.surface] in fv:
+            fv[wordIndex[node.surface]] += 1
+          else:
+            fv[wordIndex[node.surface]] = 1
+          node = node.next
+    print(*('{}:{}'.format(index, count) for index, count
+        in sorted(fv.items()))) # future print function bug in python2
 
   wordIndex.close()
 

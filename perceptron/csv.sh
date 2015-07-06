@@ -35,8 +35,8 @@ N_UPDATE=$(expr $N_TRAIN_INSTANCES \* 8)
 
 ## constants
 CSV_DIR=csv
-UPDATE_CSV=updates.csv
-MARGIN_CSV=margin.csv
+UPDATE_STR=update
+MARGIN_STR=margin
 
 ## define MARGIN_RANGE and UPDATE_RANGE
 UPDATE_RANGE=invalid_value
@@ -70,7 +70,7 @@ done
 csvFileName() {
   if [ $# -eq 2 ]
   then
-    echo "${1}-$2"
+    echo "${1}-${2}_$(echo "$TRAIN_DATA" | tr ' .-' '___').csv"
     return
   else
     echo "csvFileName(): invalid arguments" >&2
@@ -86,7 +86,7 @@ do
 
   # create new output files
 
-  for file in "$UPDATE_CSV" "$MARGIN_CSV"
+  for file in "$UPDATE_STR" "$MARGIN_STR"
   do
     : > "$CSV_DIR/$(csvFileName "${i_iter}" "$file")"
   done
@@ -96,7 +96,7 @@ do
 
   for num in $UPDATE_RANGE
   do
-    outputFile="$CSV_DIR/$(csvFileName "${i_iter}" "$UPDATE_CSV")"
+    outputFile="$CSV_DIR/$(csvFileName "${i_iter}" "$UPDATE_STR")"
     echo "$num,$(python3 perceptron.py -u \
         $(expr $N_TRAIN_INSTANCES \* $num) \
         "$TRAIN_DATA" "$TEST_DATA")" >> "$outputFile"
@@ -109,7 +109,7 @@ do
   
   for num in $MARGIN_RANGE
   do
-    outputFile="$CSV_DIR/$(csvFileName "${i_iter}" "$MARGIN_CSV")"
+    outputFile="$CSV_DIR/$(csvFileName "${i_iter}" "$MARGIN_STR")"
     echo "$num,$(python3 perceptron.py -m $num -u $N_UPDATE \
         "$TRAIN_DATA" "$TEST_DATA")" >> "$outputFile"
     echo "$outputFile margin=$num done!"

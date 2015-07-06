@@ -16,6 +16,9 @@ csv:
 	[ -d ${CSV_DIR} ] || mkdir ${CSV_DIR}
 	sh csv.sh ${N_CSV}
 
+img:
+	make -C ${CSV_DIR}
+
 clean_csv:
 	${RM} ${CSV_DIR}/*.csv
 

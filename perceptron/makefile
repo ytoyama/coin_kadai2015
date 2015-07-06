@@ -6,7 +6,7 @@ TRAIN_FILE = train_cv0.txt
 TEST_FILE = test_cv0.txt
 
 CSV_DIR = csv
-N_CSV = 8
+N_ITER = 8
 
 
 
@@ -15,7 +15,7 @@ all: csv csv/img
 # touch data files when reproduce csv dir cause it's a dir
 csv: ${TRAIN_FILE} ${TEST_FILE}
 	@echo "# generating csv data"
-	sh csv.sh ${N_CSV}
+	sh csv.sh ${N_ITER} ${TRAIN_FILE} ${TEST_FILE}
 
 csv/img: csv
 	make -C ${CSV_DIR}

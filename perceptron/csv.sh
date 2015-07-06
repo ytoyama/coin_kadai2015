@@ -13,17 +13,32 @@ trap "
 allProcs=
 
 
-CSV_DIR=csv
-TRAIN_DATA=train_cv0.txt
-TEST_DATA=test_cv0.txt
+# configuration
+
+## parse arguments
+
+if [ $# == 3 ] && [ $1 -gt 0 ] && [ -f $2 ] && [ -f $3 ]
+then
+  N_ITER=$1
+  TRAIN_DATA=$2
+  TEST_DATA=$3
+  echo "\$N_ITER = $N_ITER"
+  echo "\$TRAIN_DATA = $TRAIN_DATA"
+  echo "\$TEST_DATA = $TEST_DATA"
+else
+  echo "usage: $0 <numOfIteration> <train fv file> <test fv file>" >&2
+  exit 1
+fi
 
 N_TRAIN_INSTANCES=$(echo $(wc -l "$TRAIN_DATA") | cut -f 1 -d ' ')
 N_UPDATE=$(expr $N_TRAIN_INSTANCES \* 8)
 
+## constants
+CSV_DIR=csv
 UPDATE_CSV=updates.csv
 MARGIN_CSV=margin.csv
 
-# define MARGIN_RANGE and UPDATE_RANGE
+## define MARGIN_RANGE and UPDATE_RANGE
 UPDATE_RANGE=invalid_value
 MARGIN_RANGE=invalid_value
 if [ -f ./config.sh ]
@@ -34,6 +49,7 @@ else
 fi
 echo "\$UPDATE_RANGE = $(echo $UPDATE_RANGE)"
 echo "\$MARGIN_RANGE = $(echo $MARGIN_RANGE)"
+
 
 ## check if all numbers in UPDATE_RANGE and MARGIN_RANGE
 for num in $UPDATE_RANGE
@@ -48,24 +64,13 @@ do
 done
 
 
-# parse arguments
-
-if [ $# == 1 ] && [ $1 -gt 0 ]
-then
-  echo num of iteration = $1
-  numOfIter=$1
-else
-  echo "usage: $0 <numOfIteration>" >&2
-  exit 1
-fi
-
 
 # main routine
 
-for i_iter in $(seq 1 $numOfIter)
+for i_iter in $(seq 1 $N_ITER)
 do
 
-  # create new files
+  # create new output files
 
   for file in "$UPDATE_CSV" "$MARGIN_CSV"
   do

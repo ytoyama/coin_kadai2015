@@ -2,14 +2,15 @@
 
 LIBLINEAR_DIR='./liblinear*'
 
-TRAIN_FILE='train_cv0.txt'
-TEST_FILE='test_cv0.txt'
-
-if [ $# -eq 0 ]
+if [ $# -lt 3 ]
 then
-  echo "usage: $0 <number>..." >&2
+  echo "usage: $0 <train file> <test file> <number>..." >&2
   exit 1
 fi
+
+TRAIN_FILE=$1
+TEST_FILE=$2
+shift 2
 
 for cost_index in "$@"
 do

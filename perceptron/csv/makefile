@@ -4,10 +4,11 @@ RM = rm -rf
 all: img
 
 img:
-	python2 conv_csv.py
+	test -d ${.TARGET} || mkdir ${.TARGET}
+	python2 conv_csv.py . img
 
 clean:
-	${RM} *.png
+	${RM} img/*.png
 
 
 .PHONY: all clean img

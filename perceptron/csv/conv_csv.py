@@ -30,16 +30,16 @@ def isCsv(filename):
 
 
 def main(*args):
-  if len(args) == 2:
-    dir = args[1]
-  elif len(args) == 1:
-    dir = '.'
+  if len(args) == 3:
+    srcDir = args[1]
+    targetDir = args[2]
   else:
-    error("usage: {} [<directory name>]".format(args[0]))
+    error("usage: {} <source directory> <target directory>".format(args[0]))
     return
+  del args
 
   result = {}
-  for filename in os.listdir(dir):
+  for filename in os.listdir(srcDir):
     if os.path.isfile(filename) and isCsv(filename):
       #debug(filename)
       nIter, name = os.path.splitext(filename)[0].split('_')
@@ -73,7 +73,7 @@ def main(*args):
     plt.ylabel("accuracy")
     plt.grid()
     plt.plot([x for x, _ in totalResult], [y for _, y in totalResult])
-    fig.savefig(name + ".png")
+    fig.savefig(os.path.join(targetDir, name + ".png"))
 
 
 if __name__ == "__main__":

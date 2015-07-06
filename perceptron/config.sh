@@ -1,0 +1,2 @@
+UPDATE_RANGE=$(seq 1 20)
+MARGIN_RANGE=$(seq 0 0.2 3)

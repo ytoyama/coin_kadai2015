@@ -23,6 +23,29 @@ N_UPDATE=$(expr $N_TRAIN_INSTANCES \* 8)
 UPDATE_CSV=updates.csv
 MARGIN_CSV=margin.csv
 
+# define MARGIN_RANGE and UPDATE_RANGE
+UPDATE_RANGE=invalid_value
+MARGIN_RANGE=invalid_value
+if [ -f ./config.sh ]
+then
+  . ./config.sh
+else
+  exit 1
+fi
+echo "\$UPDATE_RANGE = $(echo $UPDATE_RANGE)"
+echo "\$MARGIN_RANGE = $(echo $MARGIN_RANGE)"
+
+## check if all numbers in UPDATE_RANGE and MARGIN_RANGE
+for num in $UPDATE_RANGE
+do
+  # every num must be a integer
+  expr $num \* 1 > /dev/null || exit 1
+done
+for num in $MARGIN_RANGE
+do
+  # every num must be equal to or greater than 0
+  expr $num \>= 0 > /dev/null || exit 1
+done
 
 
 # parse arguments
@@ -52,10 +75,7 @@ do
 
   # updates
 
-  echo creating "$CSV_DIR/$UPDATE_CSV"
-  range=$(seq 1 12)
-  echo "range =" $range
-  for num in $range
+  for num in $UPDATE_RANGE
   do
     outputFile="$CSV_DIR/${i_iter}_$UPDATE_CSV"
     echo "$num,$(python3 perceptron.py -u \
@@ -68,10 +88,7 @@ do
 
   # margin
   
-  echo creating "$CSV_DIR/$MARGIN_CSV"
-  range=$(seq 0 0.2 1.6)
-  echo "range =" $range
-  for num in $range
+  for num in $MARGIN_RANGE
   do
     outputFile="$CSV_DIR/${i_iter}_$MARGIN_CSV"
     echo "$num,$(python3 perceptron.py -m $num -u $N_UPDATE \

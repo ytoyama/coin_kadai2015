@@ -2,8 +2,14 @@ RM = rm -rf
 
 PYTHON = python3
 PYTHON_PROG = perceptron.py
+
+.ifdef RAKUTEN
+TRAIN_FILE = rakuten_train.txt
+TEST_FILE = rakuten_test.txt
+.else
 TRAIN_FILE = train_cv0.txt
 TEST_FILE = test_cv0.txt
+.endif
 
 CSV_DIR = csv
 N_ITER = 8

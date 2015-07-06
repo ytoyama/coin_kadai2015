@@ -26,7 +26,7 @@ def verbose(message):
 # constants
 
 g_AVERAGED_PERCEPTRON = True
-g_BIAS = 1
+g_BIAS = True
 g_NORMALIZE_FV = True
 g_MARGIN_THRESHOLD = 0.1
 g_UPDATE_NUM = None
@@ -42,7 +42,7 @@ def normalize_fv(fv):
 
 def read_instance(line):
   instance = int(line.split()[0]), \
-      [(0, g_BIAS)] + [(int(fv_elem.split(':')[0]), int(fv_elem.split(':')[1]))
+      [(0, int(g_BIAS))] + [(int(fv_elem.split(':')[0]), int(fv_elem.split(':')[1]))
       for fv_elem in line.split()[1:]]
   if g_NORMALIZE_FV:
     return instance[0], normalize_fv(instance[1])
@@ -116,7 +116,7 @@ def main(*args):
   EXEC_NAME = args[0]
 
   try:
-    opts, args = getopt.getopt(args[1:], 'ab:m:nu:v')
+    opts, args = getopt.getopt(args[1:], 'abm:nu:v')
   except getopt.GetoptError as err:
     fail(err)
   except:
@@ -124,18 +124,16 @@ def main(*args):
 
   try:
     for opt, value in opts:
-      if opt in {'-a', '-n'} and value:
+      if opt in {'-a', '-b', '-n'} and value:
         fail("Option, {} does not need any option argument.".format(opt))
-      if opt in {'-b', '-m', '-u'} and not value:
+      if opt in {'-m', '-u'} and not value:
         fail("Option, {} needs an option argument.".format(opt))
       if opt == '-a':
         global g_AVERAGED_PERCEPTRON
         g_AVERAGED_PERCEPTRON = False
       elif opt == '-b':
         global g_BIAS
-        g_BIAS = float(value)
-        if g_BIAS < 0:
-          fail("bias for feature vectors cannot be any negative number.")
+        g_BIAS = False
       elif opt == '-m':
         global g_MARGIN_THRESHOLD
         g_MARGIN_THRESHOLD = float(value)

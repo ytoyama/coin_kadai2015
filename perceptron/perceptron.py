@@ -83,19 +83,21 @@ def mult_fv(weight, fv):
 
 def update_weight(weight, tmp_weight, instance, nupdates):
   iprod = mult_fv(weight, instance[1])
-  if (iprod * instance[0] <= 0 or abs(iprod) < g_MARGIN_THRESHOLD) \
+  correct = iprod * instance[0] > 0 # have the same sign
+  if (not correct or abs(iprod) < g_MARGIN_THRESHOLD) \
       and instance[0] > 0:
     #debug("addition performed.")
     add_fv(weight, instance[1], 1)
     add_fv(tmp_weight, instance[1], nupdates)
-  elif (iprod * instance[0] <= 0 or abs(iprod) < g_MARGIN_THRESHOLD) \
+  elif (not correct or abs(iprod) < g_MARGIN_THRESHOLD) \
       and instance[0] < 0:
     #debug("substruction performed.")
     sub_fv(weight, instance[1], 1)
     sub_fv(tmp_weight, instance[1], nupdates)
   else:
-    pass
     #debug("weight was not updated.")
+    pass
+  return correct
 
 def averaged_weight(weight, tmp_weight, nupdates):
   return [x - y / (nupdates + 1) for x, y in zip(weight, tmp_weight)]
